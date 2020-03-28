@@ -25,7 +25,7 @@ public class Cell : MonoBehaviour
         transform.localPosition = new Vector3(_x * _gridSize, (-_y) * _gridSize, gameObject.transform.position.z);
     }
 
-    public void VisitCell()
+    public void Visit()
     {
         visited = true;
 
