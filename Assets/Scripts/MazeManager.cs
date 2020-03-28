@@ -56,16 +56,64 @@ public class MazeManager : MonoBehaviour
 
     void NextCell()
     {
-        //Get all available neighbours.
-        List<Cell> neighbours = ReturnAvailableNeighboursFor(currentCell.xPos, currentCell.yPos);
+        if (visitedCells.Count > 0)
+        {
+            //Get all available neighbours.
+            List<Cell> neighbours = ReturnAvailableNeighboursFor(currentCell.xPos, currentCell.yPos);
 
-        //select a random neighbour.
-        int randomIndex = Random.Range(0, neighbours.Count);
-        Cell mCell = neighbours[randomIndex];
+            if (neighbours.Count > 0)
+            {
+                //select a random neighbour.
+                int randomIndex = Random.Range(0, neighbours.Count);
+                Cell mCell = neighbours[randomIndex];
 
-        gridCells[mCell.xPos, mCell.yPos].Visit();
-        currentCell = gridCells[mCell.xPos, mCell.yPos];
-        visitedCells.Push(currentCell);
+                //Let the walls be crushed between de current and next cell.
+                CrushWalls(mCell);
+                currentCell.ResetSprite();
+
+                gridCells[mCell.xPos, mCell.yPos].Visit();
+                currentCell = gridCells[mCell.xPos, mCell.yPos];
+                visitedCells.Push(currentCell);
+            }
+            else
+            {
+                Cell mCell = visitedCells.Peek();
+                currentCell = gridCells[mCell.xPos, mCell.yPos];
+                visitedCells.Pop();
+                NextCell();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Maze already created.");
+        }
+
+    }
+
+    void CrushWalls(Cell nextCell)
+    {
+        switch (nextCell.posAsNeighbour)
+        {
+            case 0: //Top
+                gridCells[currentCell.xPos, currentCell.yPos].walls[0] = false;
+                gridCells[nextCell.xPos, nextCell.yPos].walls[2] = false;
+                break;
+
+            case 1: //Right
+                gridCells[currentCell.xPos, currentCell.yPos].walls[1] = false;
+                gridCells[nextCell.xPos, nextCell.yPos].walls[3] = false;
+                break;
+
+            case 2: //Bottom
+                gridCells[currentCell.xPos, currentCell.yPos].walls[2] = false;
+                gridCells[nextCell.xPos, nextCell.yPos].walls[0] = false;
+                break;
+
+            case 3: //Left
+                gridCells[currentCell.xPos, currentCell.yPos].walls[3] = false;
+                gridCells[nextCell.xPos, nextCell.yPos].walls[1] = false;
+                break;
+        }
     }
 
     List<Cell> ReturnAvailableNeighboursFor(int _xPos, int _yPos)
@@ -77,6 +125,7 @@ public class MazeManager : MonoBehaviour
         {
             if (!gridCells[_xPos, _yPos - 1].visited)
             {
+                gridCells[_xPos, _yPos - 1].posAsNeighbour = 0;
                 neighbours.Add(gridCells[_xPos, _yPos - 1]);
                 Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos - 1);
             }
@@ -87,6 +136,8 @@ public class MazeManager : MonoBehaviour
         {
             if (!gridCells[_xPos + 1, _yPos].visited)
             {
+                gridCells[_xPos + 1, _yPos].posAsNeighbour = 1;
+
                 neighbours.Add(gridCells[_xPos + 1, _yPos]);
                 Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos + 1, _yPos);
             }
@@ -97,6 +148,8 @@ public class MazeManager : MonoBehaviour
         {
             if (!gridCells[_xPos, _yPos + 1].visited)
             {
+                gridCells[_xPos, _yPos + 1].posAsNeighbour = 2;
+
                 neighbours.Add(gridCells[_xPos, _yPos + 1]);
                 Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos + 1);
             }
@@ -107,6 +160,8 @@ public class MazeManager : MonoBehaviour
         {
             if (!gridCells[_xPos - 1, _yPos].visited)
             {
+                gridCells[_xPos - 1, _yPos].posAsNeighbour = 3;
+
                 neighbours.Add(gridCells[_xPos - 1, _yPos]);
                 Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos - 1, _yPos);
             }
