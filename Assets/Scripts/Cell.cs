@@ -35,7 +35,7 @@ public class Cell : MonoBehaviour
         {
             visited = true;
 
-            Debug.Log("Visited cell with position: " + xPos + "," + yPos);
+            // Debug.Log("Visited cell with position: " + xPos + "," + yPos);
 
             //TODO: Change this to a method that decides which sprite to assign to it.
             ResetSprite();

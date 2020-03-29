@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class MazeManager : MonoBehaviour
 {
-    public int gridWidth, gridHeight;
+    public int gridRows, gridColumns;
+    public TextMeshProUGUI widthCounter, heightCounter;
     public GameObject cellObject;
 
     private float cellSize = 2.56f;
+    private int cellSizeInPixels = 256;
+    private float scaleRatio = 1;
+
     private GameObject[,] grid;
     private Cell[,] gridCells;
     private Cell currentCell;
@@ -17,33 +22,90 @@ public class MazeManager : MonoBehaviour
     /// </summary>
     private Stack<Cell> visitedCells;
 
-    void Start()
+    private void Start()
     {
-        //Transform the parent grid gameobject so that the cells are centred in the screen. 
-        transform.position = new Vector3((-gridWidth) * (cellSize / 2) + (cellSize / 2), (gridHeight) * (cellSize / 2) - (cellSize / 2), gameObject.transform.position.z);
+        //Set the UI controls value to the grid's values.
+        UpdateUIControls();
+
+        //Scale the Maze to the current screensize so it all is visible.
+        ScaleToScreen();
 
         //Create the basic grid for the maze.
         CreateGrid();
 
-        visitedCells = new Stack<Cell>();
-
-        //Start at the first cell.
-        gridCells[0, 0].Visit();
-        currentCell = gridCells[0, 0];
-        visitedCells.Push(currentCell);
+        //Generate the maze on top of the current grid.
+        CreateMaze();
     }
 
-    void CreateGrid()
+    public void RecreateMaze()
     {
+        //Wipe the previous grid gameobjects in the scene.
+        WipeGrid();
+
+        //Scale the Maze to the current screensize so it all is visible.
+        ScaleToScreen();
+
+        //Create the basic grid for the maze.
+        CreateGrid();
+
+        //Generate the maze on top of the current grid.
+        CreateMaze();
+    }
+
+    public void IncreaseWidth()
+    {
+        if (gridRows < 99)
+        {
+            gridRows++;
+
+            UpdateUIControls();
+        }
+    }
+
+    public void DecreaseWidth()
+    {
+        if (gridRows > 1)
+        {
+            gridRows--;
+
+            UpdateUIControls();
+        }
+    }
+
+    public void IncreaseHeight()
+    {
+        if (gridColumns < 99)
+        {
+            gridColumns++;
+
+            UpdateUIControls();
+        }
+    }
+
+    public void DecreaseHeight()
+    {
+        if (gridColumns > 1)
+        {
+            gridColumns--;
+
+            UpdateUIControls();
+        }
+    }
+
+    private void CreateGrid()
+    {
+        //Transform this parent grid gameobject so that the cells are centred in the screen. 
+        transform.position = new Vector3((-gridRows) * (cellSize * scaleRatio / 2) + (cellSize * scaleRatio / 2), (gridColumns) * (cellSize * scaleRatio / 2) - (cellSize * scaleRatio / 2), gameObject.transform.position.z);
+
         //Two dimensional array for the gameobjects.
-        grid = new GameObject[gridWidth, gridHeight];
+        grid = new GameObject[gridRows, gridColumns];
 
         //Two dimensional array for the Cell instances.
-        gridCells = new Cell[gridWidth, gridHeight];
+        gridCells = new Cell[gridRows, gridColumns];
 
-        for (int x = 0; x < gridWidth; x++)
+        for (int x = 0; x < gridRows; x++)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < gridColumns; y++)
             {
                 GameObject mCell = grid[x, y] = Instantiate(cellObject, gameObject.transform);
 
@@ -54,7 +116,31 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    void NextCell()
+    private void WipeGrid()
+    {
+        for (int x = 0; x < grid.GetLength(0); x++)
+        {
+            for (int y = 0; y < grid.GetLength(1); y++)
+            {
+                GameObject.Destroy(grid[x, y]);
+            }
+        }
+    }
+
+    private void CreateMaze()
+    {
+        //Clear/Init the visited cells stack.
+        visitedCells = new Stack<Cell>();
+
+        //Start at the first cell.
+        gridCells[0, 0].Visit();
+        currentCell = gridCells[0, 0];
+        visitedCells.Push(currentCell);
+
+        NextCell();
+    }
+
+    private void NextCell()
     {
         if (visitedCells.Count > 0)
         {
@@ -74,23 +160,26 @@ public class MazeManager : MonoBehaviour
                 gridCells[mCell.xPos, mCell.yPos].Visit();
                 currentCell = gridCells[mCell.xPos, mCell.yPos];
                 visitedCells.Push(currentCell);
+
+                NextCell();
             }
             else
             {
                 Cell mCell = visitedCells.Peek();
                 currentCell = gridCells[mCell.xPos, mCell.yPos];
                 visitedCells.Pop();
+
                 NextCell();
             }
         }
         else
         {
-            Debug.LogWarning("Maze already created.");
+            // Debug.LogWarning("Maze already created.");
         }
 
     }
 
-    void CrushWalls(Cell nextCell)
+    private void CrushWalls(Cell nextCell)
     {
         switch (nextCell.posAsNeighbour)
         {
@@ -116,7 +205,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    List<Cell> ReturnAvailableNeighboursFor(int _xPos, int _yPos)
+    private List<Cell> ReturnAvailableNeighboursFor(int _xPos, int _yPos)
     {
         List<Cell> neighbours = new List<Cell>();
 
@@ -127,31 +216,31 @@ public class MazeManager : MonoBehaviour
             {
                 gridCells[_xPos, _yPos - 1].posAsNeighbour = 0;
                 neighbours.Add(gridCells[_xPos, _yPos - 1]);
-                Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos - 1);
+                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos - 1);
             }
         }
 
         //Check Right
-        if (_xPos < gridWidth - 1)
+        if (_xPos < gridRows - 1)
         {
             if (!gridCells[_xPos + 1, _yPos].visited)
             {
                 gridCells[_xPos + 1, _yPos].posAsNeighbour = 1;
 
                 neighbours.Add(gridCells[_xPos + 1, _yPos]);
-                Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos + 1, _yPos);
+                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos + 1, _yPos);
             }
         }
 
         //Check Bottom
-        if (_yPos < gridHeight - 1)
+        if (_yPos < gridColumns - 1)
         {
             if (!gridCells[_xPos, _yPos + 1].visited)
             {
                 gridCells[_xPos, _yPos + 1].posAsNeighbour = 2;
 
                 neighbours.Add(gridCells[_xPos, _yPos + 1]);
-                Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos + 1);
+                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos + 1);
             }
         }
 
@@ -163,19 +252,51 @@ public class MazeManager : MonoBehaviour
                 gridCells[_xPos - 1, _yPos].posAsNeighbour = 3;
 
                 neighbours.Add(gridCells[_xPos - 1, _yPos]);
-                Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos - 1, _yPos);
+                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos - 1, _yPos);
             }
         }
 
         return neighbours;
     }
 
-    void Update()
+    private void UpdateUIControls()
     {
-        //Visits the next cell if Space is pressed down.
-        if (Input.GetKeyDown(KeyCode.Space))
+        //If the WidthCounter isn't null (in the case that one doesn't want to use the UI), update the counter.
+        if (widthCounter)
         {
-            NextCell();
+            widthCounter.text = gridRows.ToString();
         }
+
+        //If the HeightCounter isn't null (in the case that one doesn't want to use the UI), update the counter.
+        if (heightCounter)
+        {
+            heightCounter.text = gridColumns.ToString();
+        }
+    }
+
+    private void ScaleToScreen()
+    {
+        float HorizontalScaleRatio = (float)Screen.width / (float)(cellSizeInPixels * gridRows);
+        float VerticalScaleRatio = (float)Screen.height / (float)(cellSizeInPixels * gridColumns);
+
+        if (HorizontalScaleRatio < VerticalScaleRatio)
+        {
+            scaleRatio = HorizontalScaleRatio;
+            transform.localScale = new Vector3(scaleRatio, scaleRatio, scaleRatio);
+        }
+        else
+        {
+            scaleRatio = VerticalScaleRatio;
+            transform.localScale = new Vector3(scaleRatio, scaleRatio, scaleRatio);
+        }
+    }
+
+    private void Update()
+    {
+        // //Visits the next cell if Space is pressed down.
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     NextCell();
+        // }
     }
 }

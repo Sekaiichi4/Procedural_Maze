@@ -96,3 +96,4 @@ MonoBehaviour:
   yPos: 0
   walls: 01010101
   visited: 0
+  posAsNeighbour: 0
