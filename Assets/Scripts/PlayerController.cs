@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
         direction = 2;
     }
 
+    //Reset the position of the player to the cell on position 0, 0
     public void ResetPosition()
     {
         xPos = 0;
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //If the character is still walking, lower its cooldown, else be ready for the next input or animation change.
         if (walkCooldown > 0)
         {
             walkCooldown -= Time.deltaTime;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MazeControlsUI : MonoBehaviour
 {
-    // Start is called before the first frame update
+    // Toggles the visibility of this gameobject.
     public void ToggleVisibility()
     {
         if (gameObject.activeSelf)

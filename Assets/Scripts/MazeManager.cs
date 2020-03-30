@@ -52,7 +52,8 @@ public class MazeManager : MonoBehaviour
         CreateMaze();
     }
 
-    public void IncreaseWidth()
+    //Increment the Rows of the grid.
+    public void IncreaseRows()
     {
         if (gridRows < 99)
         {
@@ -62,7 +63,8 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    public void DecreaseWidth()
+    //Decrement the Rows of the grid.
+    public void DecreaseRows()
     {
         if (gridRows > 1)
         {
@@ -72,7 +74,8 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    public void IncreaseHeight()
+    //Increment the Columns of the grid.
+    public void IncreaseColumns()
     {
         if (gridColumns < 99)
         {
@@ -82,7 +85,8 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    public void DecreaseHeight()
+    //Decrement the Columns of the grid.
+    public void DecreaseColumns()
     {
         if (gridColumns > 1)
         {
@@ -92,6 +96,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
+    //Create the grid to draw the maze on.
     private void CreateGrid()
     {
         //Transform this parent grid gameobject so that the cells are centred in the screen. 
@@ -116,6 +121,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
+    //Remove the previous grid's cell gameobjects.
     private void WipeGrid()
     {
         for (int x = 0; x < grid.GetLength(0); x++)
@@ -127,6 +133,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
+    //Draw the maze on the grid.
     private void CreateMaze()
     {
         //Clear/Init the visited cells stack.
@@ -140,6 +147,7 @@ public class MazeManager : MonoBehaviour
         NextCell();
     }
 
+    //Proceed to the next cell to visit during the maze creating process.
     private void NextCell()
     {
         if (visitedCells.Count > 0)
@@ -179,6 +187,7 @@ public class MazeManager : MonoBehaviour
 
     }
 
+    //Disable the walls between the current and next cell that is going to be visited.
     private void CrushWalls(Cell nextCell)
     {
         switch (nextCell.posAsNeighbour)
@@ -205,6 +214,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
+    //Return a list of neighbouring cells to the current one, that have not yet been visited.
     private List<Cell> ReturnAvailableNeighboursFor(int _xPos, int _yPos)
     {
         List<Cell> neighbours = new List<Cell>();
@@ -216,7 +226,6 @@ public class MazeManager : MonoBehaviour
             {
                 gridCells[_xPos, _yPos - 1].posAsNeighbour = 0;
                 neighbours.Add(gridCells[_xPos, _yPos - 1]);
-                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos - 1);
             }
         }
 
@@ -228,7 +237,6 @@ public class MazeManager : MonoBehaviour
                 gridCells[_xPos + 1, _yPos].posAsNeighbour = 1;
 
                 neighbours.Add(gridCells[_xPos + 1, _yPos]);
-                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos + 1, _yPos);
             }
         }
 
@@ -240,7 +248,6 @@ public class MazeManager : MonoBehaviour
                 gridCells[_xPos, _yPos + 1].posAsNeighbour = 2;
 
                 neighbours.Add(gridCells[_xPos, _yPos + 1]);
-                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos, _yPos + 1);
             }
         }
 
@@ -252,13 +259,13 @@ public class MazeManager : MonoBehaviour
                 gridCells[_xPos - 1, _yPos].posAsNeighbour = 3;
 
                 neighbours.Add(gridCells[_xPos - 1, _yPos]);
-                // Debug.LogFormat("Added to neighbours: {0} , {1}", _xPos - 1, _yPos);
             }
         }
 
         return neighbours;
     }
 
+    //Update the MazeControls UI if they are assigned.
     private void UpdateUIControls()
     {
         //If the WidthCounter isn't null (in the case that one doesn't want to use the UI), update the counter.
@@ -274,11 +281,10 @@ public class MazeManager : MonoBehaviour
         }
     }
 
+    //Scale the grid/maze to the screen to make sure there is minimum white space.
     private void ScaleToScreen()
     {
         Vector2 aspectRatio = GetAspectRatio(Screen.width, Screen.height);
-        // Debug.LogFormat("Screen Resolution is: {0} and {1}", Screen.width, Screen.height);
-        // Debug.LogFormat("Aspect Ratio is: {0} and {1}", aspectRatio.x, aspectRatio.y);
 
         float HorizontalScaleRatio = (float)((1080 / aspectRatio.y) * aspectRatio.x) / (float)(cellSizeInPixels * gridRows);
         float VerticalScaleRatio = (float)1080 / (float)(cellSizeInPixels * gridColumns);
@@ -295,6 +301,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
+    //Get the aspect ratio of the current screen.
     private static Vector2 GetAspectRatio(int x, int y)
     {
         float f = (float)x / (float)y;
@@ -306,14 +313,5 @@ public class MazeManager : MonoBehaviour
                 break;
         }
         return new Vector2((float)System.Math.Round(f * i, 2), i);
-    }
-
-    private void Update()
-    {
-        // //Visits the next cell if Space is pressed down.
-        // if (Input.GetKeyDown(KeyCode.Space))
-        // {
-        //     NextCell();
-        // }
     }
 }

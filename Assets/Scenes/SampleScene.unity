@@ -192,7 +192,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1797782331}
-        m_MethodName: DecreaseHeight
+        m_MethodName: DecreaseColumns
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -393,7 +393,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1797782331}
-        m_MethodName: DecreaseWidth
+        m_MethodName: DecreaseRows
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -518,7 +518,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1797782331}
-        m_MethodName: IncreaseWidth
+        m_MethodName: IncreaseRows
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -754,7 +754,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 0}
+  m_BackGroundColor: {r: 0.59607846, g: 0.72156864, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -1805,7 +1805,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1797782331}
-        m_MethodName: IncreaseHeight
+        m_MethodName: IncreaseColumns
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

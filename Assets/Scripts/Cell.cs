@@ -15,11 +15,7 @@ public class Cell : MonoBehaviour
     /// </summary>
     public int posAsNeighbour;
 
-    void Start()
-    {
-
-    }
-
+    //Initialize this cell.
     public void InitCell(int _x, int _y, float _gridSize)
     {
         xPos = _x;
@@ -29,19 +25,18 @@ public class Cell : MonoBehaviour
         transform.localPosition = new Vector3(_x * _gridSize, (-_y) * _gridSize, gameObject.transform.position.z);
     }
 
+    //Visit this cell.
     public void Visit()
     {
         if (!visited)
         {
             visited = true;
 
-            // Debug.Log("Visited cell with position: " + xPos + "," + yPos);
-
-            //TODO: Change this to a method that decides which sprite to assign to it.
             ResetSprite();
         }
     }
 
+    //Change the sprite of this cell according to which walls are broken or still instact.
     public void ResetSprite()
     {
         if (!walls[0]) //TOP BROKEN
@@ -129,10 +124,5 @@ public class Cell : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/Maze/1111v");
         }
-    }
-
-    void Update()
-    {
-
     }
 }
