@@ -13,8 +13,8 @@ public class MazeManager : MonoBehaviour
     private int cellSizeInPixels = 256;
     private float scaleRatio = 1;
 
-    private GameObject[,] grid;
-    private Cell[,] gridCells;
+    public GameObject[,] grid;
+    public Cell[,] gridCells;
     private Cell currentCell;
 
     /// <summary>
@@ -295,7 +295,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    public static Vector2 GetAspectRatio(int x, int y)
+    private static Vector2 GetAspectRatio(int x, int y)
     {
         float f = (float)x / (float)y;
         int i = 0;
