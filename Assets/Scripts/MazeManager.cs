@@ -276,8 +276,12 @@ public class MazeManager : MonoBehaviour
 
     private void ScaleToScreen()
     {
-        float HorizontalScaleRatio = (float)Screen.width / (float)(cellSizeInPixels * gridRows);
-        float VerticalScaleRatio = (float)Screen.height / (float)(cellSizeInPixels * gridColumns);
+        Vector2 aspectRatio = GetAspectRatio(Screen.width, Screen.height);
+        // Debug.LogFormat("Screen Resolution is: {0} and {1}", Screen.width, Screen.height);
+        // Debug.LogFormat("Aspect Ratio is: {0} and {1}", aspectRatio.x, aspectRatio.y);
+
+        float HorizontalScaleRatio = (float)((1080 / aspectRatio.y) * aspectRatio.x) / (float)(cellSizeInPixels * gridRows);
+        float VerticalScaleRatio = (float)1080 / (float)(cellSizeInPixels * gridColumns);
 
         if (HorizontalScaleRatio < VerticalScaleRatio)
         {
@@ -289,6 +293,19 @@ public class MazeManager : MonoBehaviour
             scaleRatio = VerticalScaleRatio;
             transform.localScale = new Vector3(scaleRatio, scaleRatio, scaleRatio);
         }
+    }
+
+    public static Vector2 GetAspectRatio(int x, int y)
+    {
+        float f = (float)x / (float)y;
+        int i = 0;
+        while (true)
+        {
+            i++;
+            if (System.Math.Round(f * i, 2) == Mathf.RoundToInt(f * i))
+                break;
+        }
+        return new Vector2((float)System.Math.Round(f * i, 2), i);
     }
 
     private void Update()

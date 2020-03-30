@@ -2461,8 +2461,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9e29a180467cf646897032bb75d0828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridRows: 16
-  gridColumns: 9
+  gridRows: 4
+  gridColumns: 3
   widthCounter: {fileID: 1146146590}
   heightCounter: {fileID: 556242829}
   cellObject: {fileID: 2591564815257311098, guid: b5be543219c40a646b1ad364672fd4d0,
