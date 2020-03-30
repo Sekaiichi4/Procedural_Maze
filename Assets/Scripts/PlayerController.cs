@@ -7,6 +7,9 @@ public class PlayerController : MonoBehaviour
 
     public MazeManager mm;
     public int xPos, yPos;
+    public float walkTime;
+
+    private float walkCooldown = 0f;
 
     private void Start()
     {
@@ -14,39 +17,61 @@ public class PlayerController : MonoBehaviour
         yPos = 0;
     }
 
-    private void Update()
+    public void ResetPosition()
     {
-        //UP
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        xPos = 0;
+        yPos = 0;
+        transform.position = mm.grid[xPos, yPos].transform.position;
+    }
+
+    private void FixedUpdate()
+    {
+        if (walkCooldown > 0)
         {
-            if (!mm.gridCells[xPos, yPos].walls[0])
-            {
-                yPos--;
-                transform.position = mm.grid[xPos, yPos].transform.position;
-            }
-        } //RIGHT
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+            walkCooldown -= Time.deltaTime;
+        }
+        else
         {
-            if (!mm.gridCells[xPos, yPos].walls[1])
+            //UP
+            if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
             {
-                xPos++;
-                transform.position = mm.grid[xPos, yPos].transform.position;
-            }
-        } //DOWN
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-        {
-            if (!mm.gridCells[xPos, yPos].walls[2])
+                if (!mm.gridCells[xPos, yPos].walls[0])
+                {
+                    yPos--;
+                    LeanTween.moveLocalY(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.y, walkTime);
+                    walkCooldown = walkTime;
+                    // transform.position = mm.grid[xPos, yPos].transform.position;
+                }
+            } //RIGHT
+            else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
-                yPos++;
-                transform.position = mm.grid[xPos, yPos].transform.position;
-            }
-        } //LEFT
-        else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-        {
-            if (!mm.gridCells[xPos, yPos].walls[3])
+                if (!mm.gridCells[xPos, yPos].walls[1])
+                {
+                    xPos++;
+                    LeanTween.moveLocalX(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.x, walkTime);
+                    walkCooldown = walkTime;
+                    // transform.position = mm.grid[xPos, yPos].transform.position;
+                }
+            } //DOWN
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             {
-                xPos--;
-                transform.position = mm.grid[xPos, yPos].transform.position;
+                if (!mm.gridCells[xPos, yPos].walls[2])
+                {
+                    yPos++;
+                    LeanTween.moveLocalY(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.y, walkTime);
+                    walkCooldown = walkTime;
+                    // transform.position = mm.grid[xPos, yPos].transform.position;
+                }
+            } //LEFT
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+            {
+                if (!mm.gridCells[xPos, yPos].walls[3])
+                {
+                    xPos--;
+                    LeanTween.moveLocalX(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.x, walkTime);
+                    walkCooldown = walkTime;
+                    //transform.position = mm.grid[xPos, yPos].transform.position;
+                }
             }
         }
     }
