@@ -10,11 +10,17 @@ public class PlayerController : MonoBehaviour
     public float walkTime;
 
     private float walkCooldown = 0f;
+    private Animator animator;
+    private int direction;
 
     private void Start()
     {
         xPos = 0;
         yPos = 0;
+
+        animator = GetComponent<Animator>();
+
+        direction = 2;
     }
 
     public void ResetPosition()
@@ -40,7 +46,9 @@ public class PlayerController : MonoBehaviour
                     yPos--;
                     LeanTween.moveLocalY(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.y, walkTime);
                     walkCooldown = walkTime;
-                    // transform.position = mm.grid[xPos, yPos].transform.position;
+
+                    animator.Play("Walk_Up");
+                    direction = 0;
                 }
             } //RIGHT
             else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
@@ -50,7 +58,9 @@ public class PlayerController : MonoBehaviour
                     xPos++;
                     LeanTween.moveLocalX(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.x, walkTime);
                     walkCooldown = walkTime;
-                    // transform.position = mm.grid[xPos, yPos].transform.position;
+
+                    animator.Play("Walk_Right");
+                    direction = 1;
                 }
             } //DOWN
             else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
@@ -60,7 +70,9 @@ public class PlayerController : MonoBehaviour
                     yPos++;
                     LeanTween.moveLocalY(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.y, walkTime);
                     walkCooldown = walkTime;
-                    // transform.position = mm.grid[xPos, yPos].transform.position;
+
+                    animator.Play("Walk_Down");
+                    direction = 2;
                 }
             } //LEFT
             else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
@@ -70,7 +82,27 @@ public class PlayerController : MonoBehaviour
                     xPos--;
                     LeanTween.moveLocalX(this.gameObject, mm.grid[xPos, yPos].transform.localPosition.x, walkTime);
                     walkCooldown = walkTime;
-                    //transform.position = mm.grid[xPos, yPos].transform.position;
+
+                    animator.Play("Walk_Left");
+                    direction = 3;
+                }
+            }
+            else
+            {
+                switch (direction)
+                {
+                    case 0:
+                        animator.Play("Idle_Back");
+                        break;
+                    case 1:
+                        animator.Play("Idle_Right");
+                        break;
+                    case 2:
+                        animator.Play("Idle_Front");
+                        break;
+                    case 3:
+                        animator.Play("Idle_Left");
+                        break;
                 }
             }
         }
